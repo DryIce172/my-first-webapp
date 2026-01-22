@@ -56,19 +56,6 @@ st.info(f"📍 **Current Location:** {city}\n\n🌤️ **Weather:** {weather_rep
 
 NEWS_API_KEY = st.secrets["news_key"]
 
-# 1. Get the USER'S browser timezone via JavaScript
-# This runs in the visitor's browser, not on the server!
-user_tz_name = streamlit_js_eval(js_expressions="Intl.DateTimeFormat().resolvedOptions().timeZone", key="tz")
-
-# 2. Use that Timezone to find the City (Fallback to UTC if not loaded yet)
-if user_tz_name:
-    # Example: 'Asia/Kolkata' -> we want just 'Kolkata' for the weather
-#    detected_city = user_tz_name.split('/')[-1].replace('_', ' ')
-    tz_string = user_tz_name
-else:
-    detected_city = "Bengaluru" # Default fallback
-    tz_string = "UTC"
-
 # 3. Correct Time Logic
 utc_now = datetime.datetime.now(datetime.timezone.utc)
 user_tz = pytz.timezone(tz_string)
@@ -146,6 +133,7 @@ st.code("""
           ||     ||
 
 """, language=None)
+
 
 
 
