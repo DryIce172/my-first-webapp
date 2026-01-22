@@ -56,11 +56,6 @@ st.info(f"📍 **Current Location:** {city}\n\n🌤️ **Weather:** {weather_rep
 
 NEWS_API_KEY = st.secrets["news_key"]
 
-# 3. Correct Time Logic
-utc_now = datetime.datetime.now(datetime.timezone.utc)
-user_tz = pytz.timezone(tz_string)
-local_now = utc_now.astimezone(user_tz)
-
 # 4. Display the dynamic header
 st.title(f"Hello from {city}!")
 st.write(f"Your local time is: **{local_now.strftime('%I:%M %p')}**")
@@ -133,6 +128,7 @@ st.code("""
           ||     ||
 
 """, language=None)
+
 
 
 
