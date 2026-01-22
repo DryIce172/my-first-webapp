@@ -23,6 +23,7 @@ if location:
         address = response.get('address', {})
         # Different areas use different keys (city, town, or suburb)
         city = address.get('city') or address.get('town') or address.get('suburb') or "Tokyo"
+        country = address.get('country')
         country_code = address.get('country_code', 'in').lower()
         
     except Exception:
@@ -110,6 +111,7 @@ st.code("""
           ||     ||
 
 """, language=None)
+
 
 
 
