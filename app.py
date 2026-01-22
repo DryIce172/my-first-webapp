@@ -1,6 +1,7 @@
 import streamlit as st
 import datetime
 import requests
+import pytz  # New library for timezone handling
 
 # --- SETTINGS ---
 NEWS_API_KEY = "YOUR_API_KEY_HERE"
@@ -16,9 +17,27 @@ try:
 except:
     city, country, country_code = "New York", "USA", "us"
 
-# 2. UI Layout
-st.title(f"👋 Welcome to {city}!")
-st.subheader(f"{datetime.datetime.now().strftime('%A, %B %d')}")
+# 2. Fix the Time Logic
+# Get the current time in UTC, then convert it to the user's timezone
+utc_now = datetime.datetime.now(datetime.timezone.utc)
+user_tz = pytz.timezone(tz_string)
+local_now = utc_now.astimezone(user_tz)
+
+# 3. Determine Greeting based on LOCAL hour
+hour = local_now.hour
+if 5 <= hour < 12:
+    greeting = "Good morning"
+elif 12 <= hour < 17:
+    greeting = "Good afternoon"
+elif 17 <= hour < 22:
+    greeting = "Good evening"
+else:
+    greeting = "Gosh, it is late — hope you are doing fine"
+
+# 4. Display in Streamlit
+st.title(f"{greeting}, {city}!")
+st.subheader(f"📅 {local_now.strftime('%A, %B %d, %Y | %I:%M %p')}")
+st.caption(f"Timezone detected as: {tz_string}")
 
 col1, col2 = st.columns(2)
 
@@ -57,4 +76,5 @@ st.code("""
       (__)\       )\/\\
           ||----w |
           ||     ||
+
 """, language=None)
