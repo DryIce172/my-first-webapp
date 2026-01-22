@@ -75,7 +75,7 @@ else:
 col1, col2 = st.columns(2)
 
 with col1:
-    st.info(f"📍 **Location:** {city}, {country}")
+    st.info(f"📍 **Location:** {city}, ")
     try:
         w_data = requests.get(f"https://wttr.in/{detected_city}?format=%C+%t").text
         st.metric("Weather", w_data)
@@ -111,6 +111,7 @@ st.code("""
           ||     ||
 
 """, language=None)
+
 
 
 
