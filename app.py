@@ -69,10 +69,7 @@ elif 17 <= hour < 22:
 else:
     greeting = "Gosh, it is late — hope you are doing fine"
 
-# 4. Display in Streamlit
-st.title(f"{greeting}, {city}!")
-st.subheader(f"📅 {local_now.strftime('%A, %B %d, %Y | %I:%M %p')}")
-st.caption(f"Timezone detected as: {tz_string}")
+
 
 col1, col2 = st.columns(2)
 
@@ -113,6 +110,7 @@ st.code("""
           ||     ||
 
 """, language=None)
+
 
 
 
