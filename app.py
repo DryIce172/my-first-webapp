@@ -27,11 +27,11 @@ if location:
         country_code = address.get('country_code', 'in').lower()
         
     except Exception:
-        city, country_code = "Bengaluru", "in"
+        city, country, country_code = "Bengaluru", "India", "in"
 else:
     # While waiting for user to click "Allow", or if they deny it
     st.info("Please allow location access to personalize your dashboard!")
-    city, country_code = "Bengaluru", "in"
+    city, country, country_code = "Bengaluru", "India", "in"
 
 # --- 3. TIMEZONE & WEATHER LOGIC ---
 # India uses one timezone ID ('Asia/Kolkata'), but we use our 'city' for the display
@@ -111,6 +111,7 @@ st.code("""
           ||     ||
 
 """, language=None)
+
 
 
 
