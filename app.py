@@ -1,10 +1,59 @@
 import streamlit as st
-from streamlit_js_eval import streamlit_js_eval
-import datetime
+from streamlit_js_eval import get_geolocation
 import requests
-import pytz  # New library for timezone handling
+import datetime
+import pytz
 
-# --- SETTINGS ---
+# --- 1. GET COORDINATES FROM BROWSER ---
+# This line triggers the "Allow Location" popup in the user's browser
+location = get_geolocation()
+
+# --- 2. CONVERT COORDINATES TO CITY NAME ---
+if location:
+    lat = location['coords']['latitude']
+    lon = location['coords']['longitude']
+    
+    try:
+        # We use OpenStreetMap's free API to turn Lat/Lon into a City Name
+        geo_url = f"https://nominatim.openstreetmap.org/reverse?lat={lat}&lon={lon}&format=json"
+        # User-Agent is required by OpenStreetMap's policy
+        headers = {'User-Agent': 'MyWeatherApp/1.0'}
+        response = requests.get(geo_url, headers=headers).json()
+        
+        address = response.get('address', {})
+        # Different areas use different keys (city, town, or suburb)
+        city = address.get('city') or address.get('town') or address.get('suburb') or "Tokyo"
+        country_code = address.get('country_code', 'in').lower()
+        
+    except Exception:
+        city, country_code = "Bengaluru", "in"
+else:
+    # While waiting for user to click "Allow", or if they deny it
+    st.info("Please allow location access to personalize your dashboard!")
+    city, country_code = "Bengaluru", "in"
+
+# --- 3. TIMEZONE & WEATHER LOGIC ---
+# India uses one timezone ID ('Asia/Kolkata'), but we use our 'city' for the display
+tz = pytz.timezone("Asia/Kolkata")
+local_now = datetime.datetime.now(tz)
+
+# Get weather based on the SPECIFIC city found via coordinates
+weather_report = requests.get(f"https://wttr.in/{city}?format=%C+%t").text
+
+# --- 4. THE UI ---
+st.title(f"Welcome to {city}!")
+st.metric("Local Time", local_now.strftime("%I:%M %p"))
+st.info(f"📍 **Current Location:** {city}\n\n🌤️ **Weather:** {weather_report}")
+
+# (Insert your News and Joke logic here using country_code and city)
+
+
+
+
+
+
+#####################
+
 NEWS_API_KEY = st.secrets["news_key"]
 
 # 1. Get the USER'S browser timezone via JavaScript
@@ -14,7 +63,7 @@ user_tz_name = streamlit_js_eval(js_expressions="Intl.DateTimeFormat().resolvedO
 # 2. Use that Timezone to find the City (Fallback to UTC if not loaded yet)
 if user_tz_name:
     # Example: 'Asia/Kolkata' -> we want just 'Kolkata' for the weather
-    detected_city = user_tz_name.split('/')[-1].replace('_', ' ')
+#    detected_city = user_tz_name.split('/')[-1].replace('_', ' ')
     tz_string = user_tz_name
 else:
     detected_city = "Bengaluru" # Default fallback
@@ -26,7 +75,7 @@ user_tz = pytz.timezone(tz_string)
 local_now = utc_now.astimezone(user_tz)
 
 # 4. Display the dynamic header
-st.title(f"Hello from {detected_city}!")
+st.title(f"Hello from {city}!")
 st.write(f"Your local time is: **{local_now.strftime('%I:%M %p')}**")
 st.caption(f"Detected Browser Timezone: {tz_string}")
 
@@ -37,21 +86,10 @@ st.caption(f"Detected Browser Timezone: {tz_string}")
 
 st.set_page_config(page_title="My First Python Web App", page_icon="🌤️")
 
-# 1. Automatic Location Detection
-try:
-    loc_res = requests.get('http://ip-api.com/json/').json()
-#    city = loc_res.get('city', 'New York')
-    country = loc_res.get('country', 'USA')
-    country_code = loc_res.get('countryCode', 'us').lower()
-    tz_string = loc_res.get('timezone', 'UTC') # e.g., 'Asia/Kolkata'
-except:
-    city, country, country_code = "New York", "USA", "us"
-
 # 2. Fix the Time Logic
 # Get the current time in UTC, then convert it to the user's timezone
 utc_now = datetime.datetime.now(datetime.timezone.utc)
 user_tz = pytz.timezone(tz_string)
-# local_now = utc_now.astimezone(user_tz)
 
 # 3. Determine Greeting based on LOCAL hour
 hour = local_now.hour
@@ -65,14 +103,14 @@ else:
     greeting = "Gosh, it is late — hope you are doing fine"
 
 # 4. Display in Streamlit
-st.title(f"{greeting}, {detected_city}!")
+st.title(f"{greeting}, {city}!")
 st.subheader(f"📅 {local_now.strftime('%A, %B %d, %Y | %I:%M %p')}")
 st.caption(f"Timezone detected as: {tz_string}")
 
 col1, col2 = st.columns(2)
 
 with col1:
-    st.info(f"📍 **Location:** {detected_city}, {country}")
+    st.info(f"📍 **Location:** {city}, {country}")
     try:
         w_data = requests.get(f"https://wttr.in/{detected_city}?format=%C+%t").text
         st.metric("Weather", w_data)
@@ -108,6 +146,7 @@ st.code("""
           ||     ||
 
 """, language=None)
+
 
 
 
