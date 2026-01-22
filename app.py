@@ -56,22 +56,7 @@ st.info(f"📍 **Current Location:** {city}\n\n🌤️ **Weather:** {weather_rep
 
 NEWS_API_KEY = st.secrets["news_key"]
 
-# 4. Display the dynamic header
-st.title(f"Hello from {city}!")
-st.write(f"Your local time is: **{local_now.strftime('%I:%M %p')}**")
-st.caption(f"Detected Browser Timezone: {tz_string}")
-
-
-
-
-
-
 st.set_page_config(page_title="My First Python Web App", page_icon="🌤️")
-
-# 2. Fix the Time Logic
-# Get the current time in UTC, then convert it to the user's timezone
-utc_now = datetime.datetime.now(datetime.timezone.utc)
-user_tz = pytz.timezone(tz_string)
 
 # 3. Determine Greeting based on LOCAL hour
 hour = local_now.hour
@@ -128,6 +113,7 @@ st.code("""
           ||     ||
 
 """, language=None)
+
 
 
 
