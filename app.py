@@ -4,7 +4,7 @@ import requests
 import pytz  # New library for timezone handling
 
 # --- SETTINGS ---
-NEWS_API_KEY = "YOUR_API_KEY_HERE"
+NEWS_API_KEY = st.secrets["news_key"]
 
 st.set_page_config(page_title="My First Python Web App", page_icon="🌤️")
 
@@ -79,4 +79,5 @@ st.code("""
           ||     ||
 
 """, language=None)
+
 
