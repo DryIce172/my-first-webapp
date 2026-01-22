@@ -10,10 +10,11 @@ st.set_page_config(page_title="My First Python Web App", page_icon="🌤️")
 
 # 1. Automatic Location Detection
 try:
-    loc = requests.get('http://ip-api.com/json/').json()
-    city = loc.get('city', 'New York')
-    country = loc.get('country', 'USA')
-    country_code = loc.get('countryCode', 'us').lower()
+    loc_res = requests.get('http://ip-api.com/json/').json()
+    city = loc_res.get('city', 'New York')
+    country = loc_res.get('country', 'USA')
+    country_code = loc_res.get('countryCode', 'us').lower()
+    tz_string = loc_res.get('timezone', 'UTC') # e.g., 'Asia/Kolkata'
 except:
     city, country, country_code = "New York", "USA", "us"
 
@@ -78,3 +79,4 @@ st.code("""
           ||     ||
 
 """, language=None)
+
