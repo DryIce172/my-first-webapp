@@ -45,7 +45,7 @@ try:
     country_code = loc_res.get('countryCode', 'us').lower()
     tz_string = loc_res.get('timezone', 'UTC') # e.g., 'Asia/Kolkata'
 except:
-    , country, country_code = "New York", "USA", "us"
+    city, country, country_code = "New York", "USA", "us"
 
 # 2. Fix the Time Logic
 # Get the current time in UTC, then convert it to the user's timezone
@@ -108,6 +108,7 @@ st.code("""
           ||     ||
 
 """, language=None)
+
 
 
 
